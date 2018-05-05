@@ -6,7 +6,7 @@
  *
  * Note that you should read
  * the pre-written functions.
- * 
+ *
  * Contents:
  * 1. minimaxWrapper:   Pre-written
  * 2. heuristic:        Pre-written
@@ -98,6 +98,13 @@ const isBaseCase = (state, depth) => {
     const possibleSuccessorStates = state.nextStates();
     const numberPossibleSuccessorStates = possibleSuccessorStates.length;
     // Your code here.
+    // console.log('possibleSuccessorStates',possibleSuccessorStates)
+    // console.log('numberPossibleSuccessorStates',numberPossibleSuccessorStates)
+    if (numberPossibleSuccessorStates === 0 || depth === 0) {
+        return true
+    } else {
+        return false
+    }
 }
 
 /*
@@ -113,16 +120,32 @@ const isBaseCase = (state, depth) => {
  */
 const minimax = (state, depth, maximizingPlayer) => {
     if (isBaseCase(state, depth)) {
-        // Invoke heuristic
+        return heuristic(state, maximizingPlayer)
     } else {
-        // Possible states is an array of future states, of 
+        // Possible states is an array of future states, of
         // the same kind that gets passed into the "state"
         // paramter in minimax.
         const possibleStates = state.nextStates();
         const minimizingPlayer = maximizingPlayer === 'x' ? 'o' : 'x';
         const currentPlayer = state.nextMovePlayer;
         // Reduce to further
+        const smallVal = possibleStates.map((val) => {
+            return minimax(val, depth - 1, maximizingPlayer)
+        })
         // invocations of minimax.
+        let search = smallVal[0]
+
+        smallVal.forEach(element => {
+            if (currentPlayer === minimizingPlayer) {
+                if (element < search) {
+                    search = element
+                }
+            } else if (element > search) {
+                search = element
+            }
+        });
+
+        return search
     }
 }
 
@@ -135,7 +158,7 @@ const minimax = (state, depth, maximizingPlayer) => {
 const minimaxAlphaBeta = (state, depth, maximizingPlayer) => {
 
 	const minimaxAlphaBetaInner = (state, depth, alpha, beta) => {
-        
+
         if (isBaseCase(state, depth)) {
             // Invoke heuristic
         } else {
